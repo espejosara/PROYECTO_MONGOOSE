@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User.js"); 
 
-// Endpoint para crear un usuario (CREATE)
 router.post("/create", async (req, res) => {
     try {
         const user = await User.create(req.body);
@@ -14,15 +13,30 @@ router.post("/create", async (req, res) => {
     }
 });
 
-// Endpoint para leer todos los usuarios (READ)
 router.get("/", async (req, res) => {
     try {
-        // .find() sin nada dentro significa "búscame TODOS los documentos de esta colección"
+       
         const users = await User.find(); 
         res.status(200).send(users);
     } catch (error) {
         console.error(error);
         res.status(500).send({ message: "Hubo un problema al obtener los usuarios" });
+    }
+});
+
+router.put("/id/:_id", async (req, res) => {
+    try {
+       
+        const updatedUser = await User.findByIdAndUpdate(req.params._id, req.body, { new: true });
+        
+        if (!updatedUser) {
+            return res.status(404).send({ message: "Usuario no encontrado" });
+        }
+        
+        res.status(200).send(updatedUser);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Hubo un problema al actualizar el usuario" });
     }
 });
 
